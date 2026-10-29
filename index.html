@@ -356,10 +356,9 @@
       <div class="welcome-icon">📚✨</div>
       <h1>English 6 Quiz</h1>
       <p class="subtitle">
-        Ôn tập giữa học kì I: My New School, My House và My Friends.
-        Hãy chọn đáp án đúng cho từng câu hỏi nhé!
+        Midterm I Review: My New School, My House, and My Friends!
       </p>
-      <button class="primary-btn" onclick="startQuiz()">Bắt đầu làm bài 🚀</button>
+      <button class="primary-btn" onclick="startQuiz()">Getting Start 🚀</button>
     </section>
 
     <section id="quiz" class="screen">
@@ -391,17 +390,17 @@
     <section id="result" class="screen">
       <div class="result-box">
         <div class="result-icon">🎉🏆</div>
-        <h1>Hoàn thành bài trắc nghiệm!</h1>
+        <h1>Quiz Completed!</h1>
         <div class="score" id="scoreText">0 / 30</div>
         <p class="result-message" id="resultMessage"></p>
       </div>
 
       <div class="wrong-list">
-        <h3>Những câu trả lời chưa chính xác</h3>
+        <h3>Incorrect answers</h3>
         <div id="wrongAnswers"></div>
       </div>
 
-      <button class="restart-btn" onclick="restartQuiz()">Làm lại từ đầu 🔄</button>
+      <button class="restart-btn" onclick="restartQuiz()"> Do it again 🔄</button>
     </section>
   </main>
 
@@ -650,7 +649,7 @@
 
         const feedback = document.getElementById("feedback");
         feedback.className = "feedback success";
-        feedback.textContent = "🎆 Chính xác! Làm tốt lắm!";
+        feedback.textContent = "🎆  Correct! Well done!";
       } else {
         playSound(wrongSound);
         optionButtons[selectedIndex].classList.add("wrong");
@@ -665,7 +664,7 @@
         const feedback = document.getElementById("feedback");
         feedback.className = "feedback encourage";
         feedback.textContent =
-          `💪 Chưa chính xác lần này. Đáp án đúng là: ${q.options[q.answer]}. Cố gắng hơn ở câu tiếp theo nhé!`;
+          `💪 Not quite right this time. The correct answer is: ${q.options[q.answer]}. Try harder on the next question!`;
       }
 
       optionButtons.forEach((button, index) => {
@@ -678,8 +677,8 @@
       nextButton.style.display = "inline-block";
       nextButton.textContent =
         currentQuestion === questions.length - 1
-          ? "Xem kết quả 🎯"
-          : "Câu tiếp theo →";
+          ? "Show the result 🎯"
+          : "Next Question →";
     }
 
     function nextQuestion() {
@@ -702,13 +701,13 @@
       let message = "";
 
       if (percentage >= 90) {
-        message = "Xuất sắc! Em đã nắm rất chắc kiến thức! 🌟";
+        message = "Excellent! You've mastered the material very well! 🌟";
       } else if (percentage >= 70) {
-        message = "Rất tốt! Em hãy ôn lại một vài câu chưa đúng nhé! 👏";
+        message = "Very good! Please review the questions you got wrong. 👏";
       } else if (percentage >= 50) {
-        message = "Khá tốt! Hãy tiếp tục luyện tập để tiến bộ hơn! 💪";
+        message = "Pretty good! Keep practicing to improve even more! 💪";
       } else {
-        message = "Đừng buồn nhé! Ôn lại bài và thử lại một lần nữa! 📖";
+        message = "Don't be discouraged! Review the lesson and try again! 📖";
       }
 
       document.getElementById("resultMessage").textContent =
@@ -723,7 +722,7 @@
 
       if (wrongQuestions.length === 0) {
         wrongAnswersBox.innerHTML =
-          `<div class="no-wrong">🎉 Tuyệt vời! Em trả lời đúng tất cả các câu!</div>`;
+          `<div class="no-wrong">🎉 You answered all the questions correctly!</div>`;
         return;
       }
 
