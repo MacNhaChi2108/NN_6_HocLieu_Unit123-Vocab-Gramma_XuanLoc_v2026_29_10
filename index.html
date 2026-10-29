@@ -574,6 +574,15 @@
     const welcomeScreen = document.getElementById("welcome");
     const quizScreen = document.getElementById("quiz");
     const resultScreen = document.getElementById("result");
+    const correctSound = new Audio("correcto_Xgyp04B.mp3");
+    const wrongSound = new Audio("wrong_5_mSf2AE4.mp3");
+
+    function playSound(sound) {
+      sound.currentTime = 0;
+      sound.play().catch(error => {
+      console.log("Không thể phát âm thanh:", error);
+  });
+}
 
     function startQuiz() {
       currentQuestion = 0;
@@ -636,12 +645,14 @@
 
       if (selectedIndex === q.answer) {
         score++;
+        playSound(correctSound);
         optionButtons[selectedIndex].classList.add("correct");
 
         const feedback = document.getElementById("feedback");
         feedback.className = "feedback success";
         feedback.textContent = "🎆 Chính xác! Làm tốt lắm!";
       } else {
+        playSound(wrongSound);
         optionButtons[selectedIndex].classList.add("wrong");
         optionButtons[q.answer].classList.add("correct");
 
