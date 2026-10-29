@@ -1,0 +1,744 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English 6 – Midterm Quiz</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --blue: #2563eb;
+      --dark-blue: #1e3a8a;
+      --light-blue: #eff6ff;
+      --green: #16a34a;
+      --red: #dc2626;
+      --yellow: #f59e0b;
+      --text: #172554;
+      --muted: #64748b;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, #dbeafe, #fef3c7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 850px;
+      min-height: 620px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 28px;
+      box-shadow: 0 18px 50px rgba(30, 64, 175, 0.2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      min-height: 620px;
+      padding: 42px;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #welcome {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(145deg, #eff6ff, #ffffff);
+    }
+
+    .welcome-icon {
+      font-size: 76px;
+      margin-bottom: 18px;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    h1 {
+      color: var(--dark-blue);
+      font-size: clamp(30px, 5vw, 48px);
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      color: var(--dark-blue);
+      margin-bottom: 18px;
+    }
+
+    .subtitle {
+      max-width: 580px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .primary-btn,
+    .next-btn,
+    .restart-btn {
+      border: none;
+      border-radius: 999px;
+      color: white;
+      background: var(--blue);
+      padding: 15px 30px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .primary-btn:hover,
+    .next-btn:hover,
+    .restart-btn:hover {
+      background: var(--dark-blue);
+      transform: translateY(-2px);
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .quiz-title {
+      font-weight: bold;
+      color: var(--dark-blue);
+    }
+
+    .progress-text {
+      color: var(--muted);
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      border-radius: 20px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      transition: width 0.4s ease;
+    }
+
+    .question-window {
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .question-card {
+      animation: slideIn 0.45s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(80px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .question-number {
+      display: inline-block;
+      color: var(--blue);
+      background: var(--light-blue);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .question-text {
+      font-size: clamp(20px, 3vw, 27px);
+      line-height: 1.45;
+      margin-bottom: 26px;
+    }
+
+    .options {
+      display: grid;
+      gap: 14px;
+    }
+
+    .option-btn {
+      text-align: left;
+      border: 2px solid #dbeafe;
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: white;
+      color: var(--text);
+      font-size: 17px;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--blue);
+      background: #eff6ff;
+      transform: translateX(5px);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-btn.correct {
+      background: #dcfce7;
+      border-color: var(--green);
+      color: #166534;
+      font-weight: bold;
+    }
+
+    .option-btn.wrong {
+      background: #fee2e2;
+      border-color: var(--red);
+      color: #991b1b;
+      font-weight: bold;
+    }
+
+    .option-btn.dimmed {
+      opacity: 0.35;
+    }
+
+    .feedback {
+      min-height: 48px;
+      margin-top: 20px;
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 17px;
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    .feedback.success {
+      color: #166534;
+      background: #f0fdf4;
+    }
+
+    .feedback.encourage {
+      color: #9a3412;
+      background: #fff7ed;
+    }
+
+    .next-area {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    .next-btn {
+      display: none;
+      background: var(--dark-blue);
+    }
+
+    #result {
+      background: linear-gradient(145deg, #ffffff, #eff6ff);
+      overflow-y: auto;
+    }
+
+    .result-box {
+      text-align: center;
+      margin: auto 0 25px;
+    }
+
+    .result-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+    }
+
+    .score {
+      font-size: clamp(46px, 8vw, 78px);
+      font-weight: bold;
+      color: var(--blue);
+      margin: 12px 0;
+    }
+
+    .result-message {
+      color: var(--muted);
+      font-size: 18px;
+      margin-bottom: 24px;
+    }
+
+    .wrong-list {
+      width: 100%;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .wrong-list h3 {
+      color: var(--dark-blue);
+      margin-bottom: 14px;
+    }
+
+    .wrong-item {
+      background: #fff7ed;
+      border-left: 5px solid var(--yellow);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      line-height: 1.55;
+    }
+
+    .wrong-item strong {
+      color: #9a3412;
+    }
+
+    .no-wrong {
+      background: #f0fdf4;
+      color: #166534;
+      border-radius: 14px;
+      padding: 18px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+      }
+
+      .app {
+        min-height: 100vh;
+        border-radius: 0;
+      }
+
+      .screen {
+        min-height: 100vh;
+        padding: 28px 20px;
+      }
+
+      .quiz-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .option-btn {
+        font-size: 16px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section id="welcome" class="screen active">
+      <div class="welcome-icon">📚✨</div>
+      <h1>English 6 Quiz</h1>
+      <p class="subtitle">
+        Ôn tập giữa học kì I: My New School, My House và My Friends.
+        Hãy chọn đáp án đúng cho từng câu hỏi nhé!
+      </p>
+      <button class="primary-btn" onclick="startQuiz()">Bắt đầu làm bài 🚀</button>
+    </section>
+
+    <section id="quiz" class="screen">
+      <div class="quiz-header">
+        <div class="quiz-title">ENGLISH 6 – MIDTERM PRACTICE</div>
+        <div class="progress-text" id="progressText">Câu 1 / 30</div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="question-window">
+        <div class="question-card" id="questionCard">
+          <span class="question-number" id="questionNumber"></span>
+          <div class="question-text" id="questionText"></div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+      </div>
+
+      <div class="next-area">
+        <button class="next-btn" id="nextButton" onclick="nextQuestion()">
+          Câu tiếp theo →
+        </button>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="result-box">
+        <div class="result-icon">🎉🏆</div>
+        <h1>Hoàn thành bài trắc nghiệm!</h1>
+        <div class="score" id="scoreText">0 / 30</div>
+        <p class="result-message" id="resultMessage"></p>
+      </div>
+
+      <div class="wrong-list">
+        <h3>Những câu trả lời chưa chính xác</h3>
+        <div id="wrongAnswers"></div>
+      </div>
+
+      <button class="restart-btn" onclick="restartQuiz()">Làm lại từ đầu 🔄</button>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        question: "Nick is very ______. He makes everyone laugh.",
+        options: ["funny", "hard-working", "shy"],
+        answer: 0
+      },
+      {
+        question: "My sister always does her homework carefully. She is very ______.",
+        options: ["lazy", "hard-working", "funny"],
+        answer: 1
+      },
+      {
+        question: "Mi often helps her friends with their homework. She is ______.",
+        options: ["kind", "noisy", "lazy"],
+        answer: 0
+      },
+      {
+        question: "My best friend likes doing sports and outdoor activities. He is ______.",
+        options: ["active", "quiet", "serious"],
+        answer: 0
+      },
+      {
+        question: "We use a ______ to write on the board.",
+        options: ["ruler", "calculator", "chalk"],
+        answer: 2
+      },
+      {
+        question: "I often use a ______ to draw straight lines.",
+        options: ["pencil case", "ruler", "school bag"],
+        answer: 1
+      },
+      {
+        question: "English, Maths and Science are school ______.",
+        options: ["subjects", "furniture", "rooms"],
+        answer: 0
+      },
+      {
+        question: "I often play ______ after school.",
+        options: ["basketball", "homework", "breakfast"],
+        answer: 0
+      },
+      {
+        question: "My father is cooking in the ______.",
+        options: ["bedroom", "kitchen", "bathroom"],
+        answer: 1
+      },
+      {
+        question: "We watch TV and talk with our family in the ______.",
+        options: ["living room", "bathroom", "garage"],
+        answer: 0
+      },
+      {
+        question: "There is a bed, a desk and a wardrobe in my ______.",
+        options: ["kitchen", "bedroom", "garden"],
+        answer: 1
+      },
+      {
+        question: "The cat is ______ the table.",
+        options: ["under", "between", "next"],
+        answer: 0
+      },
+      {
+        question: "The picture is ______ the wall.",
+        options: ["on", "under", "between"],
+        answer: 0
+      },
+      {
+        question: "The school is ______ the library and the park.",
+        options: ["behind", "between", "in"],
+        answer: 1
+      },
+      {
+        question: "This is ______ book.",
+        options: ["Lan", "Lans", "Lan’s"],
+        answer: 2
+      },
+      {
+        question: "______ bedroom is next to mine.",
+        options: ["My sister", "My sister’s", "My sisters"],
+        answer: 1
+      },
+      {
+        question: "Nam ______ to school by bike every day.",
+        options: ["go", "goes", "going"],
+        answer: 1
+      },
+      {
+        question: "They ______ English on Mondays.",
+        options: ["study", "studies", "studying"],
+        answer: 0
+      },
+      {
+        question: "Lan ______ in a small house.",
+        options: ["live", "living", "lives"],
+        answer: 2
+      },
+      {
+        question: "I ______ get up early on school days.",
+        options: ["usually", "usual", "use"],
+        answer: 0
+      },
+      {
+        question: "She ______ to school by bus.",
+        options: ["often go", "often goes", "goes often"],
+        answer: 1
+      },
+      {
+        question: "We ______ play video games on weekdays.",
+        options: ["never", "never plays", "plays never"],
+        answer: 0
+      },
+      {
+        question: "Look! The boys ______ football in the playground.",
+        options: ["play", "are playing", "plays"],
+        answer: 1
+      },
+      {
+        question: "My mother ______ dinner at the moment.",
+        options: ["cooks", "cook", "is cooking"],
+        answer: 2
+      },
+      {
+        question: "They ______ aerobics now.",
+        options: ["do", "doing", "are doing"],
+        answer: 2
+      },
+      {
+        question: "She ______ long black hair.",
+        options: ["have", "has", "is"],
+        answer: 1
+      },
+      {
+        question: "Linda has ______ hair.",
+        options: ["curly", "friendly", "helpful"],
+        answer: 0
+      },
+      {
+        question: "What does your best friend look like?",
+        options: [
+          "He is tall and thin.",
+          "He likes playing football.",
+          "He is very kind."
+        ],
+        answer: 0
+      },
+      {
+        question: "What is your new classmate like?",
+        options: [
+          "She has long hair.",
+          "She is friendly and helpful.",
+          "She has blue eyes."
+        ],
+        answer: 1
+      },
+      {
+        question: "My brother has short, ______ hair.",
+        options: ["straight", "outgoing", "clever"],
+        answer: 0
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    const welcomeScreen = document.getElementById("welcome");
+    const quizScreen = document.getElementById("quiz");
+    const resultScreen = document.getElementById("result");
+
+    function startQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      userAnswers = [];
+      welcomeScreen.classList.remove("active");
+      resultScreen.classList.remove("active");
+      quizScreen.classList.add("active");
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+
+      document.getElementById("progressText").textContent =
+        `Câu ${currentQuestion + 1} / ${questions.length}`;
+
+      document.getElementById("progressFill").style.width =
+        `${((currentQuestion + 1) / questions.length) * 100}%`;
+
+      document.getElementById("questionNumber").textContent =
+        `Question ${currentQuestion + 1}`;
+
+      document.getElementById("questionText").textContent = q.question;
+
+      const optionsBox = document.getElementById("options");
+      optionsBox.innerHTML = "";
+
+      const letters = ["A", "B", "C"];
+
+      q.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.className = "option-btn";
+        button.innerHTML = `<strong>${letters[index]}.</strong> ${option}`;
+        button.onclick = () => chooseAnswer(index);
+        optionsBox.appendChild(button);
+      });
+
+      const feedback = document.getElementById("feedback");
+      feedback.textContent = "";
+      feedback.className = "feedback";
+
+      document.getElementById("nextButton").style.display = "none";
+
+      const card = document.getElementById("questionCard");
+      card.style.animation = "none";
+      void card.offsetWidth;
+      card.style.animation = "slideIn 0.45s ease";
+    }
+
+    function chooseAnswer(selectedIndex) {
+      const q = questions[currentQuestion];
+      const optionButtons = document.querySelectorAll(".option-btn");
+
+      optionButtons.forEach(button => {
+        button.disabled = true;
+      });
+
+      userAnswers[currentQuestion] = selectedIndex;
+
+      if (selectedIndex === q.answer) {
+        score++;
+        optionButtons[selectedIndex].classList.add("correct");
+
+        const feedback = document.getElementById("feedback");
+        feedback.className = "feedback success";
+        feedback.textContent = "🎆 Chính xác! Làm tốt lắm!";
+      } else {
+        optionButtons[selectedIndex].classList.add("wrong");
+        optionButtons[q.answer].classList.add("correct");
+
+        optionButtons.forEach((button, index) => {
+          if (index !== selectedIndex && index !== q.answer) {
+            button.classList.add("dimmed");
+          }
+        });
+
+        const feedback = document.getElementById("feedback");
+        feedback.className = "feedback encourage";
+        feedback.textContent =
+          `💪 Chưa chính xác lần này. Đáp án đúng là: ${q.options[q.answer]}. Cố gắng hơn ở câu tiếp theo nhé!`;
+      }
+
+      optionButtons.forEach((button, index) => {
+        if (index !== selectedIndex && index !== q.answer) {
+          button.classList.add("dimmed");
+        }
+      });
+
+      const nextButton = document.getElementById("nextButton");
+      nextButton.style.display = "inline-block";
+      nextButton.textContent =
+        currentQuestion === questions.length - 1
+          ? "Xem kết quả 🎯"
+          : "Câu tiếp theo →";
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      quizScreen.classList.remove("active");
+      resultScreen.classList.add("active");
+
+      document.getElementById("scoreText").textContent =
+        `${score} / ${questions.length}`;
+
+      const percentage = Math.round((score / questions.length) * 100);
+      let message = "";
+
+      if (percentage >= 90) {
+        message = "Xuất sắc! Em đã nắm rất chắc kiến thức! 🌟";
+      } else if (percentage >= 70) {
+        message = "Rất tốt! Em hãy ôn lại một vài câu chưa đúng nhé! 👏";
+      } else if (percentage >= 50) {
+        message = "Khá tốt! Hãy tiếp tục luyện tập để tiến bộ hơn! 💪";
+      } else {
+        message = "Đừng buồn nhé! Ôn lại bài và thử lại một lần nữa! 📖";
+      }
+
+      document.getElementById("resultMessage").textContent =
+        `${message} Em đạt ${percentage}%.`;
+
+      const wrongAnswersBox = document.getElementById("wrongAnswers");
+      wrongAnswersBox.innerHTML = "";
+
+      const wrongQuestions = questions
+        .map((q, index) => ({ q, index }))
+        .filter(item => userAnswers[item.index] !== item.q.answer);
+
+      if (wrongQuestions.length === 0) {
+        wrongAnswersBox.innerHTML =
+          `<div class="no-wrong">🎉 Tuyệt vời! Em trả lời đúng tất cả các câu!</div>`;
+        return;
+      }
+
+      wrongQuestions.forEach(item => {
+        const { q, index } = item;
+        const selected = userAnswers[index];
+
+        const div = document.createElement("div");
+        div.className = "wrong-item";
+        div.innerHTML = `
+          <strong>Câu ${index + 1}:</strong> ${q.question}<br>
+          Em chọn: <strong>${q.options[selected]}</strong><br>
+          Đáp án đúng: <strong>${q.options[q.answer]}</strong>
+        `;
+        wrongAnswersBox.appendChild(div);
+      });
+    }
+
+    function restartQuiz() {
+      resultScreen.classList.remove("active");
+      welcomeScreen.classList.add("active");
+    }
+  </script>
+</body>
+</html>
+
+
+
+
